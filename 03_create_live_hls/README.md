@@ -1,6 +1,6 @@
 # README
 
-Demonstrate how to monitor a folder for changes.  
+Demonstrate how to simulate a remote process sending audio and building a HLS on the server side.  
 
 
 https://github.com/chrisguest75/shell_examples/blob/master/47_ffmpeg/RECORDING.md
@@ -20,9 +20,11 @@ apt install inotify-tools
 ## Example
 
 ```sh
+# shell 1
 mkdir -p ./out
 ./notify.sh "./out"
 
+# shell 2
 ffmpeg -hide_banner -f pulse -i alsa_input.pci-0000_00_1b.0.analog-stereo -ac 1 -ar 22050 -segment_time 00:00:10 -f segment ./out/recording%03d.wav
 
 ```
