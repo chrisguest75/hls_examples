@@ -230,13 +230,5 @@ done < <(ls ./output/partialhlsaac)
 * how-to-create-a-sequence-with-leading-zeroes-using-brace-expansion [here](https://unix.stackexchange.com/questions/60257/how-to-create-a-sequence-with-leading-zeroes-using-brace-expansion)  
 * ffmpeg-append-segments-to-m3u8-file-without-ext-x-discontinuity-tag [here](https://stackoverflow.com/questions/63592822/ffmpeg-append-segments-to-m3u8-file-without-ext-x-discontinuity-tag)  
 * practical-ffmpeg-commands-to-manipulate-a-video [here](https://transang.me/practical-ffmpeg-commands-to-manipulate-a-video/)  
-
-
-https://gist.github.com/samson-sham/7cb3a404a7aaaff62ec0ebbe08fb84e1
-
-https://ffmpeg.org/ffmpeg-formats.html#Options-9
-
-
-
-https://stackoverflow.com/questions/450799/shell-command-to-sum-integers-one-per-line
-https://stackoverflow.com/questions/16040567/use-awk-to-extract-substring
+* samson-sham/ffmpegExplained.sh [here](https://gist.github.com/samson-sham/7cb3a404a7aaaff62ec0ebbe08fb84e1)
+* ffmpeg docs 4.17 hls [here](https://ffmpeg.org/ffmpeg-formats.html#Options-9)

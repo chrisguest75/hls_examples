@@ -19,16 +19,5 @@ mp42hls ../../output/bigbuckbunny/bigbuckbunny-x264-st-16bit_timecode-hlsready.m
 
 ## Resources
 
-https://ffmpegfromzerotohero.com/blog/ffmpeg-tutorial-convert-and-stream-your-videos-with-hls-and-videojs/
-
-https://docs.peer5.com/guides/setting-up-hls-live-streaming-server-using-nginx/
-
-https://videojs.com/getting-started
-
-https://github.com/video-dev/hls.js
-https://www.bento4.com/
-
-https://hlsbook.net/blog/
-https://hlsbook.net/generating-hls-playlists-with-bento4/
-
-https://hlsbook.net/hls-nginx-rtmp-module/
+* FFMPEG Tutorial: convert and stream your videos with HLS and VideoJS. [here](https://ffmpegfromzerotohero.com/blog/ffmpeg-tutorial-convert-and-stream-your-videos-with-hls-and-videojs/)  
+* Bento4 MP4, DASH, HLS, CMAF SDK and Tools [here](https://www.bento4.com/)  
