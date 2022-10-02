@@ -97,10 +97,13 @@ mkdir -p $OUTPATH
 
 # using sox gives an accurate cut
 # gseq and gdate or seq and date
+count=0
 for index in $(gseq -s " " -f %04g 0 $DURATION_SECONDS $(( TOTAL_SEGMENTS - 1 ))); 
 do  
-    echo "write ${OUTPATH}/file$index.wav $index duration $DURATION_SECONDS"
-    sox "$INPUT" "${OUTPATH}/file$index.wav" trim $index $DURATION_SECONDS
+    fileid=$(gseq -s " " -f %04g $count $count)
+    echo "write ${OUTPATH}/file$fileid.wav $index duration $DURATION_SECONDS"
+    sox "$INPUT" "${OUTPATH}/file$fileid.wav" trim $index $DURATION_SECONDS
+    count=$((count+1))
 done
 
 

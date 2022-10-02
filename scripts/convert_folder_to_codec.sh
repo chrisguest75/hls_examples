@@ -22,7 +22,7 @@ OPTIONS:
 
 Examples:
     $SCRIPT_NAME --help 
-    $SCRIPT_NAME --folder=./sources/18-07-android-wav-mono --output=./output/18-07-android-wav-mono-aac --codec=aac
+    $SCRIPT_NAME --folder=./sources/testtone --output=./output/testtone-aac --codec=aac
 
 EOF
 }

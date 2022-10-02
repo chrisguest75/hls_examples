@@ -20,7 +20,7 @@ OPTIONS:
 
 Examples:
     $SCRIPT_NAME --help 
-    $SCRIPT_NAME --input=./output/18-07-android-wav-mono2.m4a --output=./output/18-07-android-mono2-2wav.wav --codec=wav
+    $SCRIPT_NAME --input=./output/./output/testtone.m4a --output=./output/testtone.wav --codec=wav
 
 EOF
 }
