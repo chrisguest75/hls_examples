@@ -12,17 +12,20 @@ usage: $SCRIPT_NAME options
 
 Convert a directory full of media segments to another codec.  
 
-NOTE: Do not go from AAC to PCM directly
+NOTE: Do not go from AAC to PCM directly because of the decode buffer at end of output.  
 
 OPTIONS:
     -h --help -?                    show this help
     -f=path, --folder=path          source folder
     -o=filepath, --output=filepath  concatenated output file
-    -c=type, --codec=type           [wav,aac,pcm]    
+    -c=type, --codec=type           [wav,aac,pcm]   
+    --checkinput                    Does not verify, but prints source probe data
+    --checkoutput                   Does not verify, but prints output probe data
+    --no-extension                  Ensure extension is removed after conversion
 
 Examples:
     $SCRIPT_NAME --help 
-    $SCRIPT_NAME --folder=./sources/testtone --output=./output/testtone-aac --codec=aac
+    $SCRIPT_NAME --folder=./sources/18-07-android-wav-mono --output=./output/18-07-android-wav-mono-aac --codec=aac
 
 EOF
 }
@@ -32,7 +35,9 @@ OUTPATH=
 CODEC=wav
 CHECK_INPUT=false
 CHECK_OUTPUT=false
+NOEXTENSIONS=false
 
+# loop over all switches
 for i in "$@"
 do
 case $i in
@@ -57,7 +62,10 @@ case $i in
     ;;   
     --checkoutput)
         CHECK_OUTPUT=true
-    ;;              
+    ;;
+    --no-extension)
+        NOEXTENSIONS=true
+    ;;  
 esac
 done    
 
@@ -109,21 +117,31 @@ mkdir -p ${OUTPATH}
 while IFS=, read -r _filename
 do
     _outfile=$(basename $_filename)
-  
+    if [[ $NOEXTENSIONS == true ]]; then
+        # remove existing extension
+        _outfile="${_outfile%.*}"
+    fi
     case $CODEC in
         wav)
             # wav
-            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" "${OUTPATH}/${_outfile}.wav"
+            EXTENSION=".wav"
+            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" "${OUTPATH}/${_outfile}${EXTENSION}"
             sox "${OUTPATH}/${_outfile}.wav" "${OUTPATH}/${_outfile}.trim.wav" trim 0 1
             rm "${OUTPATH}/${_outfile}.wav"            
         ;; 
         pcm)
             # pcm
-            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" -f f32le -acodec pcm_f32le -ar 16000 "${OUTPATH}/${_outfile}.pcm"                   
+            EXTENSION=".pcm"
+            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" -f f32le -acodec pcm_f32le -ar 16000 "${OUTPATH}/${_outfile}${EXTENSION}"                   
         ;;         
         aac)
             # aac
-            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" -strict very -flags low_delay -c:a:0 aac -profile:a aac_low -b:a 64k -filter_complex "[0]asettb=1/44100,apad=pad_len=0,asetnsamples=nb_out_samples=512:p=0" "${OUTPATH}/${_outfile}.m4a"
+            EXTENSION=".m4a"
+            ffmpeg -nostdin -y -hide_banner -i "${ASSET_FOLDER}/${_filename}" -strict very -flags low_delay -c:a:0 aac -profile:a aac_low -b:a 64k -filter_complex "[0]asettb=1/44100,apad=pad_len=0,asetnsamples=nb_out_samples=512:p=0" "${OUTPATH}/${_outfile}${EXTENSION}"
+            # remove extension signifying codec
+            if [[ $NOEXTENSIONS == true ]]; then
+                mv "${OUTPATH}/${_outfile}${EXTENSION}" "${OUTPATH}/${_outfile}"
+            fi            
         ;;       
     esac
 done < <(${LSCOMMAND} -1v ${ASSET_FOLDER})        

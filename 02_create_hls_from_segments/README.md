@@ -10,6 +10,8 @@ Ref: [60_create_hls_from_segments/README.md](https://github.com/chrisguest75/she
 Take an mp3 file and decode it to a wav file.  Split this file up into 10 second chunks of either wav or aac.  
 Then use ffmpeg to rebuild a HLS stream from each of the individual segments. To correctly add them use the codec time base and time in seconds of where the segment PTS should be.  Remove the DISCONTINUITY strings from the manifest and playback.  
 
+NOTE: It looks like we get discontinuity in the continuity counters which affects playback.  
+
 TODO:
 
 * Take an mp3 decode to wav and look at binary structure

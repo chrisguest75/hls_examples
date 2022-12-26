@@ -30,8 +30,9 @@ INPUT=
 OUTPATH=
 DURATION_SECONDS=1
 CODEC=wav
-TOTAL_SEGMENTS=10
+TOTAL_SEGMENTS=1
 
+# loop over all switches
 for i in "$@"
 do
 case $i in
@@ -87,38 +88,16 @@ fi
 
 mkdir -p $OUTPATH
 
-# use segmentor (doesn't seem to give accurate durations)
-# ffmpeg -hide_banner -y -i "$INPUT" -f segment -break_non_keyframes 1 -segment_time $DURATION_SECONDS ${OUTPATH}/file_%03d.wav
-
-# gstreamer seems to undercut the files
-# 10000000000
-# 1000000000 
-# gst-launch-1.0 filesrc location="$INPUT" ! decodebin ! audioconvert ! splitmuxsink location=${OUTPATH}/file_%03d.wav muxer=wavenc max-size-time=1000000000
-
-# using sox gives an accurate cut
-# gseq and gdate or seq and date
+# use soxi to determine duration to calculate number of segments required. 
+if [[ "$TOTAL_SEGMENTS" == "1" ]]; then
+    TOTAL_SEGMENTS=$(soxi -D "$INPUT" | awk '{print int($1 + 1)}')
+fi
+echo "Splitting '$INPUT' into $TOTAL_SEGMENTS $DURATION_SECONDS sec chunks" 
 count=0
-for index in $(gseq -s " " -f %04g 0 $DURATION_SECONDS $(( TOTAL_SEGMENTS - 1 ))); 
+for index in $(gseq -s " " -f %010g 0 $DURATION_SECONDS $(( TOTAL_SEGMENTS - 1 )));
 do  
-    fileid=$(gseq -s " " -f %04g $count $count)
-    echo "write ${OUTPATH}/file$fileid.wav $index duration $DURATION_SECONDS"
-    sox "$INPUT" "${OUTPATH}/file$fileid.wav" trim $index $DURATION_SECONDS
+    fileid=$(gseq -s " " -f %010g $count $count)
+    echo "write ${OUTPATH}/$fileid.wav $index duration $DURATION_SECONDS"
+    sox "$INPUT" "${OUTPATH}/$fileid.wav" trim $index $DURATION_SECONDS
     count=$((count+1))
 done
-
-
-
-# TOTAL_SEGMENTS=10
-# # gseq and gdate or seq and date
-# for index in $(gseq -s " " -f %04g 0 $DURATION_SECONDS $TOTAL_SEGMENTS); 
-# do
-#     _starttime=$(gdate -d@$index -u +%H:%M:%S)
-#     echo "-ss $_starttime -t 00:00:$DURATION_SECONDS"
-#     ffmpeg -hide_banner -y -i "$INPUT" -ss $_starttime -t 00:00:$DURATION_SECONDS -acodec copy ${OUTPATH}/file$index.wav < /dev/null
-# done
-
-# list chunks
-#ll ./output/chunked
-
-# inspect a segment 
-#ffprobe -v error -show_format -show_streams -print_format json ./output/chunked/${WAVFILE_NOEXT}.0010.wav | jq .

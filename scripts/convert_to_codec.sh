@@ -10,7 +10,7 @@ function help() {
     cat <<- EOF
 usage: $SCRIPT_NAME options
 
-Convert an input audio file to wav or aac file.
+Convert an input audio file to wav, aac or pcm file.
 
 OPTIONS:
     -h --help -?                    show this help
@@ -20,7 +20,7 @@ OPTIONS:
 
 Examples:
     $SCRIPT_NAME --help 
-    $SCRIPT_NAME --input=./output/./output/testtone.m4a --output=./output/testtone.wav --codec=wav
+    $SCRIPT_NAME --input=./output/18-07-android-wav-mono2.m4a --output=./output/18-07-android-mono2-2wav.wav --codec=wav
 
 EOF
 }
@@ -29,6 +29,7 @@ INPUT=
 OUTFILE=
 CODEC=wav
 
+# loop over all switches
 for i in "$@"
 do
 case $i in
@@ -72,12 +73,14 @@ if [[ "$OUTFILE" == "" ]]; then
     exit 1
 fi
 
+# output some info on the input asset
 ffprobe -v error -show_format -show_streams -print_format json ${INPUT} | jq --arg filename "${INPUT}" -c '{ file: $filename, start_time:.format.start_time, duration:.format.duration, pts: .streams[0].start_pts, time_base: .streams[0].time_base}'
 
+# NOTE: these outputs formats are quite specific for liveengine.  
 case $CODEC in
     wav)
         # wav 
-        ffmpeg -y -hide_banner -i ${INPUT} ${OUTFILE}
+        ffmpeg -y -hide_banner -i ${INPUT} -ac 1 -ar 16000 ${OUTFILE}
     ;; 
     aac)
         # aac
@@ -89,5 +92,6 @@ case $CODEC in
     ;;
 esac
 
+# output some summary info on the output asset
 ffprobe -v error -show_format -show_streams -print_format json ${OUTFILE}
 ffprobe -v error -show_format -show_streams -print_format json ${OUTFILE} | jq --arg filename "${OUTFILE}" -c '{ file: $filename, start_time:.format.start_time, duration:.format.duration, pts: .streams[0].start_pts, time_base: .streams[0].time_base, codec_long_name: .streams[0].codec_long_name}'
