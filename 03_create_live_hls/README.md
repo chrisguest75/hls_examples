@@ -11,6 +11,33 @@ TODO:
 * Monitor folder for new files.
 * Add to the HLS stream
 
+## Start
+
+```sh
+# trim
+ffmpeg -hide_banner -i "../sources/audiobooks/christmas_short_works_2008_0812_64kb_mp3/english_achristmastree_dickens_rg_64kb.mp3" -t 00:00:30 ../sources/audiobooks/christmas_short_works_2008_0812_64kb_mp3/english_achristmastree_dickens_rg_64kb_30s.mp3
+
+# use segment 
+OUT_FOLDER=./out/segment
+rm -rf "${OUT_FOLDER}"
+mkdir -p "${OUT_FOLDER}"
+ffmpeg -hide_banner -y -i "../sources/audiobooks/christmas_short_works_2008_0812_64kb_mp3/english_achristmastree_dickens_rg_64kb_30s.mp3" -vn -c:a aac -b:a 128k -ar 16000 -channels 1 -muxdelay 0 -f segment -segment_time 6 -segment_list "${OUT_FOLDER}/playlist.m3u8" -segment_format mpegts "${OUT_FOLDER}/file%d.ts"
+
+
+# use hls
+OUT_FOLDER=./out/hls
+rm -rf "${OUT_FOLDER}"
+mkdir -p "${OUT_FOLDER}"
+ffmpeg -hide_banner -y -i "../sources/audiobooks/christmas_short_works_2008_0812_64kb_mp3/english_achristmastree_dickens_rg_64kb_30s.mp3" -vn -c:a aac -b:a 128k -ar 16000 -channels 1 -muxdelay 0 -f hls -hls_segment_type mpegts -hls_time 6 -hls_playlist_type event -hls_flags append_list+independent_segments -hls_segment_filename "${OUT_FOLDER}/file%d.ts" "${OUT_FOLDER}/playlist.m3u8" 
+
+
+```
+
+
+
+
+
+
 ## Prereqs
 
 ```sh
